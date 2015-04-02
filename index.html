@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Jet : Java EBTS Tools">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Jet</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ebts/jet">View on GitHub</a>
+
+          <h1 id="project_title">Jet</h1>
+          <h2 id="project_tagline">Java EBTS Tools</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ebts/jet/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ebts/jet/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="what-is-jet" class="anchor" href="#what-is-jet" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is JET?</h2>
+
+<p>The JET Library is a freely available open-source fully Java EBTS library capable of parsing, editing, and creating EBTS files based upon the legacy (non-XML) implementation of the <a href="http://www.nist.gov/itl/iad/ig/ansi_standard.cfm">ANSI/NIST-ITL 1-2011 Standard</a>.</p>
+
+<h2>
+<a id="quick-examples" class="anchor" href="#quick-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick Examples</h2>
+
+<p>*More extensive examples can be obtained in the JETExample package within this repository.</p>
+
+<h3>
+<a id="creating-a-new-ebts-file" class="anchor" href="#creating-a-new-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a new EBTS File</h3>
+
+<p><code>Ebts ebts = new Ebts();</code> <br>
+<code>GenericRecord type2 = new GenericRecord(2);</code> <br>
+<code>type2.setValue(18, "LAST,FIRST"); //Typical Name Field</code> <br>
+<code>ebts.addRecord(type2);</code></p>
+
+<h3>
+<a id="parsing-an-existing-ebts-file" class="anchor" href="#parsing-an-existing-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parsing an existing EBTS File</h3>
+
+<p><code>EbtsParser parser = new EbtsParser();</code> <br>
+<code>Ebts ebtsData = parser.parse("/path/to/ebtsFile");</code> <br>
+<code>//Must be initialized with a String in current implementation (use File.getAbsolutePath() for Files).</code> <br>
+<code>GenericRecord type1 = (GenericRecord) ebts.getRecordsByType(1).get(0);</code> <br>
+<code>String lengthOfEbts = type1.getField(1).toString();</code> </p>
+
+<h3>
+<a id="modifying-contents-of-an-ebts-file" class="anchor" href="#modifying-contents-of-an-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifying Contents of an EBTS File</h3>
+
+<p><code>//Assume EBTS ebts is created.  We are going to move the values from 2.010 (First Name) and 2.011 (Last Name) to 2.018</code> <br>
+<code>GenericRecord type2 = ebts.getRecordsByType(2).get(0);</code> <br>
+<code>String firstName = type2.getField(10).toString();</code> <br>
+<code>String lastName = type2.getField(11).toString();</code> <br>
+<code>ebts.setValue(18, lastName+","+firstName);</code> <br>
+<code>type2.getFields().remove(10); //We must remove the Field from the TreeMap which represents the contents of the Record.</code> <br>
+<code>type2.getFields().remove(11);</code> <br></p>
+
+<h3>
+<a id="writing-out-an-ebts-file" class="anchor" href="#writing-out-an-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing out an EBTS File</h3>
+
+<p><code>//Assume existing EBTS ebts structure</code> <br>
+<code>EbtsBuilder builder = new EbtsBuilder(ebts);</code> <br>
+<code>byte[] serializedData = builder.build();</code> <br>
+<code>//Files.write relies on google commons io library</code> <br>
+<code>Files.write(data, new File("/path/to/outputEbts");</code> <br></p>
+
+<h2>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h2>
+
+<p>The JET Toolset originated thanks to a significant time investment from <a href="https://github.com/adamday2" class="user-mention">@adamday2</a>.  <br></p>
+
+<p>After initial deployment, a larger team has touched the toolset, enhanced, and continues to enhance its capabilities.<br></p>
+
+<p>Contributors: <br>
+<a href="https://github.com/adamday2" class="user-mention">@adamday2</a> <br>
+<a href="https://github.com/wvucam71" class="user-mention">@wvucam71</a></p>
+
+<h2>
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h2>
+
+<p>Please contact <a href="https://github.com/adamday2" class="user-mention">@adamday2</a> or <a href="https://github.com/wvucam71" class="user-mention">@wvucam71</a> for issues regarding the JET Library.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Jet maintained by <a href="https://github.com/ebts">ebts</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-55361577-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
