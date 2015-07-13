@@ -44,10 +44,10 @@
 <h3>
 <a id="creating-a-new-ebts-file" class="anchor" href="#creating-a-new-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a new EBTS File</h3>
 
-<p><code>Ebts ebts = new Ebts();</code> <br>
-<code>GenericRecord type2 = new GenericRecord(2);</code> <br>
-<code>type2.setValue(18, "LAST,FIRST"); //Typical Name Field</code> <br>
-<code>ebts.addRecord(type2);</code></p>
+<p><code>Ebts ebts = new Ebts(); <br>
+GenericRecord type2 = new GenericRecord(2); <br>
+type2.setValue(18, "LAST,FIRST"); //Typical Name Field <br>
+ebts.addRecord(type2);</code></p>
 
 <h3>
 <a id="parsing-an-existing-ebts-file" class="anchor" href="#parsing-an-existing-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parsing an existing EBTS File</h3>
