@@ -54,13 +54,12 @@ ebts.addRecord(type2);</code></pre>
 <pre><code>EbtsParser parser = new EbtsParser();
 Ebts ebtsData = parser.parse("/path/to/ebtsFile");
 GenericRecord type1 = (GenericRecord) ebts.getRecordsByType(1).get(0);
-System.out.println("The length of my record is:"+type1.getField(1).toString());</code> </pre>
+System.out.println("The length of my record is:"+type1.getField(1).toString());</code></pre>
 
 <h3>
 <a id="modifying-contents-of-an-ebts-file" class="anchor" href="#modifying-contents-of-an-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifying Contents of an EBTS File</h3>
 
-<pre><code>
-//Assume EBTS ebts is created. 
+<pre><code>//Assume EBTS ebts is created. 
 //Move the values from 2.010 (First Name) and 2.011 (Last Name) to 2.018
 GenericRecord type2 = ebts.getRecordsByType(2).get(0);
 String firstName = type2.getField(10).toString();
