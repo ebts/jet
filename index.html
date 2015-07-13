@@ -51,22 +51,22 @@ ebts.addRecord(type2);</code></pre>
 
 <h3>
 <a id="parsing-an-existing-ebts-file" class="anchor" href="#parsing-an-existing-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parsing an existing EBTS File</h3>
-
 <pre><code>EbtsParser parser = new EbtsParser();
 Ebts ebtsData = parser.parse("/path/to/ebtsFile");
-//Must be initialized with a String in current implementation (use File.getAbsolutePath() for Files).
 GenericRecord type1 = (GenericRecord) ebts.getRecordsByType(1).get(0);
-String lengthOfEbts = type1.getField(1).toString();</code> </pre>
+System.out.println("The length of my record is:"+type1.getField(1).toString());</code> </pre>
 
 <h3>
 <a id="modifying-contents-of-an-ebts-file" class="anchor" href="#modifying-contents-of-an-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifying Contents of an EBTS File</h3>
 
-<pre><code>//Assume EBTS ebts is created.  We are going to move the values from 2.010 (First Name) and 2.011 (Last Name) to 2.018
+<pre><code>
+//Assume EBTS ebts is created. 
+//Move the values from 2.010 (First Name) and 2.011 (Last Name) to 2.018
 GenericRecord type2 = ebts.getRecordsByType(2).get(0);
 String firstName = type2.getField(10).toString();
 String lastName = type2.getField(11).toString();
 ebts.setValue(18, lastName+","+firstName);
-type2.getFields().remove(10); //We must remove the Field from the TreeMap which represents the contents of the Record.
+type2.getFields().remove(10);
 type2.getFields().remove(11);</code></pre>
 
 <h3>
@@ -75,8 +75,8 @@ type2.getFields().remove(11);</code></pre>
 <pre><code>//Assume existing EBTS ebts structure
 EbtsBuilder builder = new EbtsBuilder(ebts);
 byte[] serializedData = builder.build();
-//Files.write relies on google commons io library
-Files.write(data, new File("/path/to/outputEbts");</code></pre>
+Files.write(Paths.get("/path/to/outputEbts"), data);
+</code></pre>
 
 <h2>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h2>
