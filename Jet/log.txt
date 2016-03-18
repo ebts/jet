@@ -1,7 +1,0 @@
-17:53:29.945 [main] INFO  org.mitre.jet.ebts.WsqDecoderTest - Decoded WSQ File from /Users/cfortner/Documents/Projects/ebts-si/ebts-si/Jet/target/test-classes/a001.wsq
-17:53:30.003 [main] INFO  org.mitre.jet.ebts.WsqDecoderTest - Converted Buffered Image to BMP
-17:53:30.019 [main] INFO  org.mitre.jet.ebts.WsqDecoderTest - Wrote BMP image file to /Users/cfortner/Documents/Projects/ebts-si/ebts-si/Jet/JET/src/test/resources/test-output/a001.bmp
-17:53:30.048 [main] INFO  org.jnbis.imageio.WSQImageWriter - Image is already grayscale
-17:53:30.048 [main] INFO  org.jnbis.imageio.WSQImageWriter - PPI:-1.0, BITRATE:1.5
-17:53:30.560 [main] INFO  org.jnbis.imageio.WSQImageWriter - Image is not grayscale. Converting
-17:53:30.635 [main] INFO  org.jnbis.imageio.WSQImageWriter - PPI:-1.0, BITRATE:1.5
