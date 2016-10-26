@@ -25,8 +25,8 @@ import java.nio.ByteBuffer;
 
 import static org.junit.Assert.assertEquals;
 
-public class ByteBufferUtilsTests {
-    private static final Logger log = LoggerFactory.getLogger(ByteBufferUtilsTests.class);
+public class ByteBufferUtilsTest {
+    private static final Logger log = LoggerFactory.getLogger(ByteBufferUtilsTest.class);
 
 
     @Test

@@ -26,8 +26,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class EbtsUtilsTests {
-    private static final Logger log = LoggerFactory.getLogger(EbtsUtilsTests.class);
+public class EbtsUtilsTest {
+    private static final Logger log = LoggerFactory.getLogger(EbtsUtilsTest.class);
     @Test
     public void testTransforms() throws Exception {
 
