@@ -36,11 +36,11 @@ import static org.junit.Assert.assertTrue;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class EbtsBuilderTests.
+ * The Class EbtsBuilderTest.
  */
-public class EbtsBuilderTests {
+public class EbtsBuilderTest {
 
-    private static final Logger log = LoggerFactory.getLogger(EbtsParserTests.class);
+    private static final Logger log = LoggerFactory.getLogger(EbtsBuilderTest.class);
 
     /**
      * Parses the build test.

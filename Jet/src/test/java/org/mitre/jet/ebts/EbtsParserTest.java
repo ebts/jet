@@ -28,11 +28,11 @@ import static org.junit.Assert.*;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class EbtsParserTests.
+ * The Class EbtsParserTest.
  */
-public class EbtsParserTests {
+public class EbtsParserTest {
 
-    private static final Logger log = LoggerFactory.getLogger(EbtsParserTests.class);
+    private static final Logger log = LoggerFactory.getLogger(EbtsParserTest.class);
     Ebts ebts = null;
 
     //TODO: Modify the tests to include occurrences with empty subfields (trailing especially)
@@ -113,7 +113,7 @@ public class EbtsParserTests {
 
     @Test
     public void testDescriptiveOnly() throws Exception {
-        File file = new File(ClassLoader.getSystemResource("S001-01-t10_01.eft").toURI());
+        File file = new File(ClassLoader.getSystemResource("EFT/S001-01-t10_01.eft").toURI());
 
         EbtsParser ebtsParser = new EbtsParser();
         Ebts ebtsDescriptiveOnly = ebtsParser.parse(file,ParseType.DESCRIPTIVE_ONLY);
