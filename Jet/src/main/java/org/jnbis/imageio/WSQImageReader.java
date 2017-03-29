@@ -105,7 +105,7 @@ public class WSQImageReader extends ImageReader {
             log.debug("Input:{}",getInput());
             final BitmapWithMetadata bitmap = WSQDecoder.decode((ImageInputStream)getInput());
             stopwatch.stop();
-            log.debug("Decode took: {}",stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            //log.debug("Decode took: {}",stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
             metadata = new WSQMetadata(); 
 
