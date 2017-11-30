@@ -26,7 +26,6 @@ import javax.imageio.stream.ImageInputStream;
 import java.io.IOException;
 import java.util.Locale;
 
-@MetaInfServices
 public class WSQImageReaderSpi extends ImageReaderSpi {
 
     static final String   vendorName = "JMRTD";

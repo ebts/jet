@@ -53,7 +53,13 @@ public class EbtsBuilderTest {
         File file = new File(ClassLoader.getSystemResource("EFT/S001-01-t10_01.eft").toURI());
         Ebts ebts = parser.parse(file);
         EbtsBuilder builder = new EbtsBuilder(1);
-        Files.write(builder.build(ebts), new File("/tmp/test.eft"));
+        File tmpFile = File.createTempFile("test", ".eft");
+        tmpFile.deleteOnExit();
+        try {
+            Files.write(builder.build(ebts), tmpFile);
+        } finally {
+            tmpFile.delete();
+        }
     }
 
     /**

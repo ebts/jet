@@ -9,7 +9,6 @@ import javax.imageio.stream.ImageOutputStream;
 import java.io.IOException;
 import java.util.Locale;
 
-@MetaInfServices
 public class WSQImageWriterSpi extends ImageWriterSpi {
 
     static final String vendorName = "JMRTD";
