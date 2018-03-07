@@ -5,28 +5,20 @@ import org.junit.Test;
 import org.mitre.jet.ebts.field.Field;
 import org.mitre.jet.ebts.records.GenericRecord;
 import org.mitre.jet.ebts.records.LogicalRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EmptyImageDataTest {
 
-    private static final Logger log = LoggerFactory.getLogger(EmptyImageDataTest.class);
-
-    private static LogicalRecord makeEmptyType1() {
-        return new GenericRecord(1);
-    }
-
     private static void checkRecord(LogicalRecord record) {
-        Assert.assertTrue("Type 2 should report having field 999.", record.hasField(999));
-        Assert.assertNotNull("Type 2 should report having field 999.", record.getField(999));
-        Assert.assertNotNull("Type 2 should have 999 data.", record.getField(999).getData());
-        Assert.assertTrue("Type 2 should report 999 field length of 0.", record.getField(999).getData().length == 0);
+        Assert.assertTrue("Record should report having field 999.", record.hasField(999));
+        Assert.assertNotNull("Record should return non-null 999 field.", record.getField(999));
+        Assert.assertNotNull("Field should return non-null data.", record.getField(999).getData());
+        Assert.assertTrue("Record should report the 999 field's length as 0.", record.getField(999).getData().length == 0);
     }
 
     @Test
     public void testType2() throws Exception {
         Ebts ebts = new Ebts();
-        ebts.addRecord(makeEmptyType1());
+        ebts.addRecord(new GenericRecord(1));
 
         // Create a Type-2 with a 999 field that is present but empty.
         GenericRecord type2 = new GenericRecord(2);
