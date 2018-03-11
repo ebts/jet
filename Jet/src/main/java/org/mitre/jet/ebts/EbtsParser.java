@@ -299,10 +299,10 @@ public class EbtsParser {
 
                 bb.position(bb.position()+1);
             } else {
-                //The remaining data is image data
-                //Verify that the recordLength exists and that the remaining data is > 0
-                final int readLength = record.getLength()-bb.position()-1;
-                if (record.getLength() != -1 && readLength > 0 && bb.remaining() >= readLength) {
+                // The remaining data (if any) is image data
+                // Verify that the recordLength exists and that the remaining data is > 0
+                final int readLength = record.getLength() - bb.position()-1;
+                if (record.getLength() != -1 && readLength >= 0 && bb.remaining() >= readLength) {
                     final byte[] value = new byte[readLength];
                     bb.get(value);
                     record.setImageData(value);
