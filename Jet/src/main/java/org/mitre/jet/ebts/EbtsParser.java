@@ -346,28 +346,27 @@ public class EbtsParser {
         final byte[] idc = {bb.get()};
         record.setField(2,new Field(convertBinaryFieldData(idc),ParseContents.FALSE));
 
+        //This is NOT standard, try to treat type 7 as type 4
+
         //Get the impression type
         final byte[] imp = {bb.get()};
-        record.setField(3,new Field(convertBinaryFieldData(imp),ParseContents.FALSE));
 
         //Get the fingerprint position
         final byte[] fgp = new byte[6];
         bb.get(fgp);
-        record.setField(4,new Field(convertBinaryFieldData(fgp),ParseContents.FALSE));
 
         final byte[] isr = {bb.get()};
-        record.setField(5,new Field(convertBinaryFieldData(isr),ParseContents.FALSE));
 
         final byte[] hll = new byte[2];
         bb.get(hll);
-        record.setField(6,new Field(convertBinaryFieldData(hll),ParseContents.FALSE));
 
         final byte[] vll = new byte[2];
         bb.get(vll);
-        record.setField(7,new Field(convertBinaryFieldData(vll),ParseContents.FALSE));
+
+        //end not standard
+
 
         final byte[] alg = {bb.get()};
-        record.setField(8,new Field(convertBinaryFieldData(alg),ParseContents.FALSE));
 
         final int remainingDataPosition = bb.position();
 
@@ -388,6 +387,14 @@ public class EbtsParser {
             //TODO: Add Length Checks
             //If CGA is provided, we hunt for the header as it may not be at the beginning of the remaining data (Thanks CBEFF)
             if (alg[0] != Byte.valueOf("0")) {
+
+                record.setField(3,new Field(convertBinaryFieldData(imp),ParseContents.FALSE));
+                record.setField(4,new Field(convertBinaryFieldData(fgp),ParseContents.FALSE));
+                record.setField(5,new Field(convertBinaryFieldData(isr),ParseContents.FALSE));
+                record.setField(6,new Field(convertBinaryFieldData(hll),ParseContents.FALSE));
+                record.setField(7,new Field(convertBinaryFieldData(vll),ParseContents.FALSE));
+                record.setField(8,new Field(convertBinaryFieldData(alg),ParseContents.FALSE));
+
                 int imageLocation = -1;
                 if (alg[0] == Byte.valueOf("1")) {
                     imageLocation = ImageUtils.getWsqImagePosition(bb);
@@ -416,14 +423,14 @@ public class EbtsParser {
             } else {
                 //Assume raw
                 //TODO: Validate lengths
-                final int hllInt = Shorts.fromByteArray(hll);
-                final int vllInt = Shorts.fromByteArray(vll);
-                final int imageLength = hllInt*vllInt;
-                log.debug("image length = {}",hllInt,vllInt);
-                imageData = new byte[imageLength];
-                bb.position(Ints.fromByteArray(len)-imageLength);
+                //in this case we rely on the standard that only header, IDC and binary value are set which puts us
+                //at binary position 5
+
+                bb.position(5);
+                imageData = new byte[Ints.fromByteArray(len)-5];
                 bb.get(imageData);
                 record.setField(9,new Field(imageData,ParseContents.FALSE));
+
             }
         }
 

@@ -18,10 +18,12 @@ package org.mitre.jet.ebts;
 
 import org.junit.Test;
 import org.mitre.jet.ebts.records.GenericRecord;
+import org.mitre.jet.ebts.records.LogicalRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -143,6 +145,17 @@ public class EbtsParserTest {
         assertEquals("JPEGB",type10.getField(11).toString());
         //TODO if we want this to be false,  hasImageData needs to be updated to include getField(dataField).getData().length > 0
         assertTrue(type10.hasImageData());
+    }
+
+    @Test
+    public void type7ImageBoundsTest() throws Exception {
+        File file = new File(ClassLoader.getSystemResource("EFT/type7_image_oob.eft").toURI());
+
+        EbtsParser ebtsParser = new EbtsParser();
+        //previously threw exception
+        Ebts ebts = ebtsParser.parse(file, ParseType.FULL);
+
+        ebts.getRecordsByType(7);
     }
 
 }
