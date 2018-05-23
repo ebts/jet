@@ -373,7 +373,9 @@ public class EbtsParser {
         //Examine the mimetype of the remaining data
 
 
-        byte[] imageData = new byte[Ints.fromByteArray(len)-18];
+        int remaining = Math.min(Ints.fromByteArray(len) - 18, bb.remaining());
+
+        byte[] imageData = new byte[remaining];
         bb.get(imageData);
         final String ext = EbtsUtils.getMimeExtension(imageData);
 
@@ -427,7 +429,8 @@ public class EbtsParser {
                 //at binary position 5
 
                 bb.position(5);
-                imageData = new byte[Ints.fromByteArray(len)-5];
+                remaining = Math.min(Ints.fromByteArray(len) - 5, bb.remaining());
+                imageData = new byte[remaining];
                 bb.get(imageData);
                 record.setField(9,new Field(imageData,ParseContents.FALSE));
 
