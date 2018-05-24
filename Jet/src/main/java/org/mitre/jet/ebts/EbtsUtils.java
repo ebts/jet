@@ -50,7 +50,7 @@ public final class EbtsUtils {
     private static final Logger log = LoggerFactory.getLogger(EbtsUtils.class);
     private static final Map<Integer, HashBiMap<Integer, String>> tagMap = loadPropertiesFile();
 
-    private static final Set<Integer> binaryHeaderTypes = Sets.newHashSet(3,4,5,6);
+    private static final Set<Integer> binaryHeaderTypes = Sets.newHashSet(3,4,5,6,7);
     private static final Set<Integer> genericRecordTypes = Sets.newHashSet(1,2,9,10,13,14,15,16,17);
 
     private EbtsUtils() {}
@@ -73,7 +73,7 @@ public final class EbtsUtils {
 
      * @param recordType the record type
      */
-    private static void ensureExistence(final HashMap<Integer, HashBiMap<Integer, String>> map, final int recordType) {
+    private static void ensureExistence(final Map<Integer, HashBiMap<Integer, String>> map, final int recordType) {
         if (!map.containsKey(recordType)) {
             final HashBiMap<Integer,String> biMap = HashBiMap.create();
             map.put(recordType, biMap);
@@ -87,7 +87,7 @@ public final class EbtsUtils {
      */
     private static Map<Integer,HashBiMap<Integer,String>> loadPropertiesFile(){
         //System.out.println("Loading FieldOccurrence ID -> FieldOccurrence Number Map");
-        final HashMap<Integer,HashBiMap<Integer,String>> map = new HashMap<Integer,HashBiMap<Integer,String>>();
+        final Map<Integer,HashBiMap<Integer,String>> map = new HashMap<Integer,HashBiMap<Integer,String>>();
         final String PROP_FILE_CUSTOM = "/TagMapCustom.properties";
         final String PROP_FILE_DEFAULT = "/TagMap.properties";
         InputStream inputStream = null;

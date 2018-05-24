@@ -209,13 +209,15 @@ public abstract class LogicalRecord implements Serializable, Comparable<LogicalR
     /**
      * Returns whether a field has image data.
      *
-     * @return boolean indicating whether the record contains image data
+     *
+     * @return boolean indicating whether the record contains image data.
+     * Note: Returns false if image field exists with no data
      */
     public boolean hasImageData() {
 
         final int dataField = getImageField();
 
-        return dataField > 0 && hasField(dataField);
+        return dataField > 0 && hasField(dataField) && getField(dataField).getData().length > 0;
     }
 
     public boolean isImageRecord() {
