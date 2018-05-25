@@ -90,7 +90,16 @@ public class BinaryHeaderImageRecord extends LogicalRecord implements Serializab
 
         final Field dataField = this.getField(headerFormat.length + 1);
 
-        if (dataField == null) {
+        if (dataField == null || dataField.getData() == null || dataField.getData().length <= 0 ) {
+            if (isValidImageRecordType(this.recordType)) {
+                final int dataFieldNumber = getImageField();
+                if (dataFieldNumber != -1) {
+                    final Field imageField = this.fields.get(dataFieldNumber);
+                    if (imageField != null) {
+                        return imageField.getData();
+                    }
+                }
+            }
             return new byte[0];
         } else {
             return dataField.getData();
