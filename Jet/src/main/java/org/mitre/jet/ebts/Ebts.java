@@ -138,4 +138,12 @@ public class Ebts {
         return this.records.containsKey(recordType) && !this.records.get(recordType).isEmpty();
     }
     //TODO: Add methods that relate to the idc
+
+
+    @Override
+    public String toString() {
+        return "Ebts{" +
+                "records=" + records +
+                '}';
+    }
 }

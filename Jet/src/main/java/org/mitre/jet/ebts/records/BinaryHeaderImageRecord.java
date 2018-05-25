@@ -21,6 +21,7 @@ import com.google.common.primitives.Shorts;
 import org.jetbrains.annotations.NotNull;
 import org.mitre.jet.ebts.ParseContents;
 import org.mitre.jet.ebts.field.Field;
+import org.mitre.jet.exceptions.EbtsBuildingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,23 +138,29 @@ public class BinaryHeaderImageRecord extends LogicalRecord implements Serializab
      * @return byte array containing the header
      */
     @NotNull
-    public byte[] getHeader() {
+    public byte[] getHeader() throws EbtsBuildingException {
 
         final ByteBuffer bb = ByteBuffer.allocate(getHeaderLength());
 
         for (int i = 0; i < headerFormat.length; i++) {
-            final String data = fields.get(i + 1).getOccurrences().get(0).toString();
-            if (headerFormat[i] == 1) {
-                bb.put(Byte.parseByte(data));
-            } else if (headerFormat[i] == 2) {
-                bb.putShort(Short.parseShort(data));
-            } else if (headerFormat[i] == 4) {
-                bb.putInt(Integer.parseInt(data));
-            } else if (headerFormat[i] == 6){
-                bb.put(Byte.parseByte(data));
-                for (int pos = 1; pos < 6; pos++) {
-                    bb.put((byte)-1);
+            if(fields.get(i + 1) != null) {
+                final String data = fields.get(i + 1).getOccurrences().get(0).toString();
+                if (headerFormat[i] == 1) {
+                    bb.put(Byte.parseByte(data));
+                } else if (headerFormat[i] == 2) {
+                    bb.putShort(Short.parseShort(data));
+                } else if (headerFormat[i] == 4) {
+                    bb.putInt(Integer.parseInt(data));
+                } else if (headerFormat[i] == 6) {
+                    bb.put(Byte.parseByte(data));
+                    for (int pos = 1; pos < 6; pos++) {
+                        bb.put((byte) -1);
+                    }
                 }
+            }
+            else {
+                int headerPosition = i+1;
+                throw new EbtsBuildingException("Invalid header found at header position:"+headerPosition);
             }
         }
 

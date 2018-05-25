@@ -50,7 +50,7 @@ public final class EbtsUtils {
     private static final Logger log = LoggerFactory.getLogger(EbtsUtils.class);
     private static final Map<Integer, HashBiMap<Integer, String>> tagMap = loadPropertiesFile();
 
-    private static final Set<Integer> binaryHeaderTypes = Sets.newHashSet(3,4,5,6,7);
+    private static final Set<Integer> binaryHeaderTypes = Sets.newHashSet(3,4,5,6,7,8);
     private static final Set<Integer> genericRecordTypes = Sets.newHashSet(1,2,9,10,13,14,15,16,17);
 
     private EbtsUtils() {}

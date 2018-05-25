@@ -49,8 +49,6 @@ public class EbtsParser {
 
     private static final byte COLON = 0x3a;
 
-    public enum Type7Handling {TREAT_AS_TYPE4, NIST}
-
     private static final Set<String> IMAGE_MIME_EXTENSIONS = Sets.newHashSet(".jpg", ".jp2", ".png", ".tiff", ".gif");
 
     /**
@@ -61,6 +59,10 @@ public class EbtsParser {
 
     public static Ebts parse(final byte[] bytes, final ParseType parseType) throws EbtsParsingException {
         return EbtsParser.parse(bytes,parseType,Type7Handling.TREAT_AS_TYPE4);
+    }
+
+    public static Ebts parse(final byte[] bytes, Type7Handling type7Handling) throws EbtsParsingException {
+        return EbtsParser.parse(bytes,ParseType.FULL,type7Handling);
     }
 
         /**
@@ -105,7 +107,7 @@ public class EbtsParser {
                         log.debug("Parsing type: {}", recordType);
                         if (GENERIC_RECORD_TYPES.contains(recordType)) {
                             record = parseGenericRecord(recordType, bb.slice());
-                        } else if (BINARY_HEADER_RECORD_TYPES.contains(recordType)) {
+                        } else if (BINARY_HEADER_RECORD_TYPES.contains(recordType) && recordType != 7 && recordType != 8) {
                             record = parseType3456(recordType, bb.slice());
                         } else if (recordType == 7) {
                             record = parseType7(recordType, bb.slice(), type7Handling);
@@ -339,7 +341,6 @@ public class EbtsParser {
      * @return the logical record
      */
     private static LogicalRecord parseType7(final int recordType, final ByteBuffer bb, final Type7Handling type7Handling) {
-
 
         BinaryHeaderImageRecord record = null;
         if(type7Handling.equals(Type7Handling.NIST)) {

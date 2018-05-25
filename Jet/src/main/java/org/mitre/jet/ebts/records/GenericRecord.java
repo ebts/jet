@@ -93,4 +93,9 @@ public class GenericRecord extends LogicalRecord implements Serializable {
         result = 31 * result + recordType;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "GenericRecord{}";
+    }
 }
