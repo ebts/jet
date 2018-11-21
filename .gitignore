@@ -1,0 +1,10 @@
+# Intellij workspace directory and files
+**/.idea/
+**/*.iml
+
+# Output directory for JET classes and binaries
+Jet/target
+
+# log and other test files/directories
+Jet/log.txt
+Jet/JET/src/test/resources/test-output/
