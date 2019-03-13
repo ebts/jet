@@ -100,8 +100,7 @@ public class WSQImageReader extends ImageReader {
                 return;
             }
             if (!(input instanceof ImageInputStream)) { throw new IllegalArgumentException("bad input: " + input.getClass().getCanonicalName()); }
-            final Stopwatch stopwatch = new Stopwatch();
-            stopwatch.start();
+            final Stopwatch stopwatch = Stopwatch.createStarted();
             log.debug("Input:{}",getInput());
             final BitmapWithMetadata bitmap = WSQDecoder.decode((ImageInputStream)getInput());
             stopwatch.stop();

@@ -56,8 +56,7 @@ public class WsqEncoderTest {
 
     @Test
     public void testBmp500() throws Exception {
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         ImageIO.setUseCache(false);
 
         File imageFile = new File(ClassLoader.getSystemResource("sample-gray-500.bmp").toURI());
@@ -74,8 +73,7 @@ public class WsqEncoderTest {
 
     @Test
     public void testBmpNonBiometric() throws Exception {
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         ImageIO.setUseCache(false);
 
         File imageFile = new File(ClassLoader.getSystemResource("image_not_provided.bmp").toURI());
@@ -149,8 +147,7 @@ public class WsqEncoderTest {
 
     @Test
     public void testPng() throws Exception {
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         ImageIO.setUseCache(false);
 
 
