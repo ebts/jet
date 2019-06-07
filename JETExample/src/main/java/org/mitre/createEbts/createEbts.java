@@ -191,12 +191,12 @@ public class createEbts {
 			byte [] sample = ebtsBuilder.build(ebts);
 
 			String fileName = "testEbts.eft";
-            File outputFile = new File("JETExample/src/main/resources/"+fileName);
+            		File outputFile = new File(fileName);
 			FileOutputStream fos = new FileOutputStream(outputFile);
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			bos.write(sample);
 
-			System.out.println("Done");
+			System.out.println("Created "+fileName);
 			bos.close();
 		}catch(Exception ex){
 			ex.printStackTrace();

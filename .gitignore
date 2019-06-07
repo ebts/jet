@@ -2,8 +2,13 @@
 **/.idea/
 **/*.iml
 
+#Misc directories
+**/.project/
+**/.scannerwork
+
 # Output directory for JET classes and binaries
-Jet/target
+**/target
+
 
 # log and other test files/directories
 Jet/log.txt
