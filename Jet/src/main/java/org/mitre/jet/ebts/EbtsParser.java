@@ -19,7 +19,6 @@ package org.mitre.jet.ebts;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.google.common.primitives.Ints;
-import com.google.common.primitives.Shorts;
 import org.mitre.jet.common.ByteBufferUtils;
 import org.mitre.jet.ebts.field.Field;
 import org.mitre.jet.ebts.field.Occurrence;
@@ -340,139 +339,22 @@ public class EbtsParser {
      * @param bb the bb
      * @return the logical record
      */
-    private static LogicalRecord parseType7(final int recordType, final ByteBuffer bb, final Type7Handling type7Handling) {
+    private static LogicalRecord parseType7(final int recordType, final ByteBuffer bb, final Type7Handling type7Handling) throws EbtsParsingException {
 
         BinaryHeaderImageRecord record = null;
         if(type7Handling.equals(Type7Handling.NIST)) {
-            final int[] header = new int[]{4,1};
-            int headerLength = 5;
-            record = new BinaryHeaderImageRecord(recordType, header);
-
-            //No data remains
-            if (bb.capacity() == 0) {
-                return record;
-            }
-
-            final byte[] len = new byte[4];
-            bb.get(len);
-            record.setField(1,new Field(convertBinaryFieldData(len),ParseContents.FALSE));
-
-            //Get the idc
-            final byte[] idc = {bb.get()};
-            record.setField(2,new Field(convertBinaryFieldData(idc),ParseContents.FALSE));
-
-            //Examine the mimetype of the remaining data
-            int expectedRemaining = Ints.fromByteArray(len) - headerLength;
-            if(expectedRemaining != bb.remaining()) {
-                log.warn("Unexpected remaining length found in type7 record. Expected: {} Actual: {}", expectedRemaining, bb.remaining());
-            }
-
-            int remaining = Math.min(expectedRemaining, bb.remaining());
-
-            byte[] imageData = new byte[remaining];
-            bb.get(imageData);
-            record.setField(9,new Field(imageData,ParseContents.FALSE));
+            record = parseType7AsNist( recordType, bb );
         }
         else if(type7Handling.equals(Type7Handling.TREAT_AS_TYPE4)) {
-            final int[] header = new int[]{4,1,1,6,1,2,2,1};
-            int headerLength = 18;
-            record = new BinaryHeaderImageRecord(recordType, header);
-
-            //No data remains
-            if (bb.capacity() == 0) {
-                return record;
-            }
-            final byte[] len = new byte[4];
-            bb.get(len);
-            record.setField(1,new Field(convertBinaryFieldData(len),ParseContents.FALSE));
-
-            //Get the idc
-            final byte[] idc = {bb.get()};
-            record.setField(2,new Field(convertBinaryFieldData(idc),ParseContents.FALSE));
-
-            //Get the impression type
-            final byte[] imp = {bb.get()};
-            record.setField(3,new Field(convertBinaryFieldData(imp),ParseContents.FALSE));
-
-            //Get the fingerprint position
-            final byte[] fgp = new byte[6];
-            bb.get(fgp);
-            record.setField(4,new Field(convertBinaryFieldData(fgp),ParseContents.FALSE));
-
-            final byte[] isr = {bb.get()};
-            record.setField(5,new Field(convertBinaryFieldData(isr),ParseContents.FALSE));
-
-            final byte[] hll = new byte[2];
-            bb.get(hll);
-            record.setField(6,new Field(convertBinaryFieldData(hll),ParseContents.FALSE));
-
-            final byte[] vll = new byte[2];
-            bb.get(vll);
-            record.setField(7,new Field(convertBinaryFieldData(vll),ParseContents.FALSE));
-
-            final byte[] alg = {bb.get()};
-            record.setField(8,new Field(convertBinaryFieldData(alg),ParseContents.FALSE));
-
-            final int remainingDataPosition = bb.position();
-
-            //Examine the mimetype of the remaining data
-            int expectedRemaining = Ints.fromByteArray(len) - headerLength;
-            if(expectedRemaining != bb.remaining()) {
-                log.warn("Unexpected remaining length found in type7 record. Expected: {} Actual: {}", expectedRemaining, bb.remaining());
-            }
-
-            int remaining = Math.min(expectedRemaining, bb.remaining());
-            byte[] imageData = new byte[remaining];
-            bb.get(imageData);
-            final String ext = EbtsUtils.getMimeExtension(imageData);
-
-            if (IMAGE_MIME_EXTENSIONS.contains(ext)) {
-                log.debug("Found mime-type ext of remaining data to be: {}",ext);
-                record.setField(9,new Field(imageData,ParseContents.FALSE));
-            } else {
-                log.debug("Ignoring mime-type ext of {} and searching for mimetype based on CGA",ext);
-                bb.position(remainingDataPosition);
-
-                //TODO: Add Length Checks
-                //If CGA is provided, we hunt for the header as it may not be at the beginning of the remaining data (Thanks CBEFF)
-                if (alg[0] != Byte.valueOf("0")) {
-                    int imageLocation = -1;
-                    if (alg[0] == Byte.valueOf("1")) {
-                        imageLocation = ImageUtils.getWsqImagePosition(bb);
-                        log.debug("Found WSQ at byte:{}",imageLocation);
-
-                    } else if (alg[0] == Byte.valueOf("2")) {
-                        imageLocation = ImageUtils.getJpgImagePosition(bb);
-                        log.debug("Found WSQ at byte:{}",imageLocation);
-
-                    } else if (alg[0] == Byte.valueOf("4") || alg[0] == Byte.valueOf("5")) {
-                        imageLocation = ImageUtils.getJp2ImagePosition(bb);
-                        log.debug("Found JP2 at byte:{}",imageLocation);
-                    }
-                    //PNG
-                    else if (alg[0] == Byte.valueOf("6")) {
-                        imageLocation = ImageUtils.getPngImagePosition(bb);
-                        log.debug("Found PNG at byte:{}",imageLocation);
-                    }
-
-                    if (imageLocation != -1) {
-                        bb.position(imageLocation);
-                        imageData = new byte[Ints.fromByteArray(len)-imageLocation];
-                        bb.get(imageData);
-                        record.setField(9,new Field(imageData,ParseContents.FALSE));
-                    }
-                } else {
-                    //Assume raw image data
-                    //TODO: Validate lengths
-                    final int hllInt = Shorts.fromByteArray(hll);
-                    final int vllInt = Shorts.fromByteArray(vll);
-                    final int imageLength = hllInt*vllInt;
-                    log.debug("image length = {}",hllInt,vllInt);
-                    imageData = new byte[imageLength];
-                    bb.position(Ints.fromByteArray(len)-imageLength);
-                    bb.get(imageData);
-                    record.setField(9,new Field(imageData,ParseContents.FALSE));
-                }
+            record = parseType7AsType4( recordType, bb );
+        }else if(type7Handling.equals(Type7Handling.FLEX )){
+            int pos = bb.position();
+            try{
+                record = parseType7AsType4( recordType, bb );
+            }catch ( EbtsParsingException e ){
+                // if this fails attempt to do parse as nist
+                bb.position( pos );
+                record = parseType7AsNist( recordType, bb );
             }
         }
 
@@ -488,6 +370,137 @@ public class EbtsParser {
 
         return record;
 
+    }
+
+    private static BinaryHeaderImageRecord parseType7AsNist( int recordType, ByteBuffer bb ) {
+        final int[] header = new int[]{4,1};
+        int headerLength = 5;
+        BinaryHeaderImageRecord record = new BinaryHeaderImageRecord(recordType, header);
+
+        //No data remains
+        if (bb.capacity() == 0) {
+            return record;
+        }
+
+        final byte[] len = new byte[4];
+        bb.get(len);
+        record.setField(1,new Field(convertBinaryFieldData(len),ParseContents.FALSE));
+
+        //Get the idc
+        final byte[] idc = {bb.get()};
+        record.setField(2,new Field(convertBinaryFieldData(idc),ParseContents.FALSE));
+
+        //Examine the mimetype of the remaining data
+        int expectedRemaining = Ints.fromByteArray(len) - headerLength;
+        if(expectedRemaining != bb.remaining()) {
+//            log.warn("Unexpected remaining length found in type7 record. Expected: {} Actual: {}", expectedRemaining, bb.remaining());
+        }
+
+        int remaining = Math.min(expectedRemaining, bb.remaining());
+
+        byte[] imageData = new byte[remaining];
+        bb.get(imageData);
+        record.setField(9,new Field(imageData,ParseContents.FALSE));
+
+//        record.setReadLength( remaining + headerLength );
+        
+        return record;
+    }
+
+    private static BinaryHeaderImageRecord parseType7AsType4(final int recordType, final ByteBuffer bb) throws EbtsParsingException {
+        final int[] header = new int[]{4,1,1,6,1,2,2,1};
+        int headerLength = 18;
+        BinaryHeaderImageRecord record = new BinaryHeaderImageRecord(recordType, header);
+
+        //No data remains
+        if (bb.capacity() == 0) {
+            return record;
+        }
+        final byte[] len = new byte[4];
+        bb.get(len);
+        record.setField(1,new Field(convertBinaryFieldData(len),ParseContents.FALSE));
+
+        //Get the idc
+        final byte[] idc = {bb.get()};
+        record.setField(2,new Field(convertBinaryFieldData(idc),ParseContents.FALSE));
+
+        //Get the impression type
+        final byte[] imp = {bb.get()};
+        record.setField(3,new Field(convertBinaryFieldData(imp),ParseContents.FALSE));
+
+        //Get the fingerprint position
+        final byte[] fgp = new byte[6];
+        bb.get(fgp);
+        record.setField(4,new Field(convertBinaryFieldData(fgp),ParseContents.FALSE));
+
+        final byte[] isr = {bb.get()};
+        record.setField(5,new Field(convertBinaryFieldData(isr),ParseContents.FALSE));
+
+        final byte[] hll = new byte[2];
+        bb.get(hll);
+        record.setField(6,new Field(convertBinaryFieldData(hll),ParseContents.FALSE));
+
+        final byte[] vll = new byte[2];
+        bb.get(vll);
+        record.setField(7,new Field(convertBinaryFieldData(vll),ParseContents.FALSE));
+
+        final byte[] alg = {bb.get()};
+        record.setField(8,new Field(convertBinaryFieldData(alg),ParseContents.FALSE));
+
+        final int remainingDataPosition = bb.position();
+
+        //Examine the mimetype of the remaining data
+        int expectedRemaining = Ints.fromByteArray(len) - headerLength;
+        if(expectedRemaining != bb.remaining()) {
+//            log.warn("Unexpected remaining length found in type7 record. Expected: {} Actual: {}", expectedRemaining, bb.remaining());
+        }
+
+        int remaining = Math.min(expectedRemaining, bb.remaining());
+        byte[] imageData = new byte[remaining];
+        bb.get(imageData);
+        final String ext = EbtsUtils.getMimeExtension(imageData);
+
+        if (IMAGE_MIME_EXTENSIONS.contains(ext)) {
+            log.debug("Found mime-type ext of remaining data to be: {}",ext);
+            record.setField(9,new Field(imageData,ParseContents.FALSE));
+        } else {
+            log.debug("Ignoring mime-type ext of {} and searching for mimetype based on CGA",ext);
+            bb.position(remainingDataPosition);
+
+            //TODO: Add Length Checks
+            //If CGA is provided, we hunt for the header as it may not be at the beginning of the remaining data (Thanks CBEFF)
+            if (alg[0] != Byte.valueOf("0")) {
+                int imageLocation = -1;
+                if (alg[0] == Byte.valueOf("1")) {
+                    imageLocation = ImageUtils.getWsqImagePosition(bb);
+                    log.debug("Found WSQ at byte:{}",imageLocation);
+
+                } else if (alg[0] == Byte.valueOf("2")) {
+                    imageLocation = ImageUtils.getJpgImagePosition(bb);
+                    log.debug("Found WSQ at byte:{}",imageLocation);
+
+                } else if (alg[0] == Byte.valueOf("4") || alg[0] == Byte.valueOf("5")) {
+                    imageLocation = ImageUtils.getJp2ImagePosition(bb);
+                    log.debug("Found JP2 at byte:{}",imageLocation);
+                }
+                //PNG
+                else if (alg[0] == Byte.valueOf("6")) {
+                    imageLocation = ImageUtils.getPngImagePosition(bb);
+                    log.debug("Found PNG at byte:{}",imageLocation);
+                }
+
+                if (imageLocation != -1) {
+                    bb.position(imageLocation);
+                    imageData = new byte[Ints.fromByteArray(len)-imageLocation];
+                    bb.get(imageData);
+                    record.setField(9,new Field(imageData,ParseContents.FALSE));
+                }
+            } else {
+                throw new EbtsParsingException("Unable to parse type 7 as type 4");
+            }
+//            record.setReadLength( remaining + headerLength );
+        }
+        return record;
     }
 
     /*
@@ -541,6 +554,8 @@ public class EbtsParser {
         final byte[] imageData = new byte[Integer.valueOf(lenField.toString())-record.getHeaderLength()];
         bb.get(imageData);
         record.setField(headerPosition,new Field(imageData,ParseContents.FALSE));
+        
+//        record.setReadLength( Integer.parseInt( lenField.toString() ) );
 
         if (log.isDebugEnabled()) {
             for (final Map.Entry<Integer,Field> entry : record.getFields().entrySet()) {
