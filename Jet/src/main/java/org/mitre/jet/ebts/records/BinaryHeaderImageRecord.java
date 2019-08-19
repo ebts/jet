@@ -134,7 +134,7 @@ public class BinaryHeaderImageRecord extends LogicalRecord implements Serializab
                 return Integer.parseInt(lengthField.toString());
             } catch (final NumberFormatException e) {
 
-                log.error(e.getMessage());
+                log.error(e.getMessage(),e);
 
                 return -1;
             }

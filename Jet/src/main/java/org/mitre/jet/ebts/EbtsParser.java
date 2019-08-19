@@ -352,6 +352,8 @@ public class EbtsParser {
             try{
                 record = parseType7AsType4( recordType, bb );
             }catch ( EbtsParsingException e ){
+                //TODO: Update the handling so that an ad hoc check is performed 
+                //rather than using parsing exception for flow control
                 // if this fails attempt to do parse as nist
                 bb.position( pos );
                 record = parseType7AsNist( recordType, bb );
@@ -393,7 +395,7 @@ public class EbtsParser {
         //Examine the mimetype of the remaining data
         int expectedRemaining = Ints.fromByteArray(len) - headerLength;
         if(expectedRemaining != bb.remaining()) {
-//            log.warn("Unexpected remaining length found in type7 record. Expected: {} Actual: {}", expectedRemaining, bb.remaining());
+            log.warn("Unexpected remaining length found in type7 record. Expected: {} Actual: {}", expectedRemaining, bb.remaining());
         }
 
         int remaining = Math.min(expectedRemaining, bb.remaining());
@@ -401,8 +403,6 @@ public class EbtsParser {
         byte[] imageData = new byte[remaining];
         bb.get(imageData);
         record.setField(9,new Field(imageData,ParseContents.FALSE));
-
-//        record.setReadLength( remaining + headerLength );
         
         return record;
     }
@@ -496,9 +496,8 @@ public class EbtsParser {
                     record.setField(9,new Field(imageData,ParseContents.FALSE));
                 }
             } else {
-                throw new EbtsParsingException("Unable to parse type 7 as type 4");
+                throw new EbtsParsingException("Unable to parse type 7 as type 4. Unexpected value in alg field.");
             }
-//            record.setReadLength( remaining + headerLength );
         }
         return record;
     }
@@ -555,8 +554,6 @@ public class EbtsParser {
         bb.get(imageData);
         record.setField(headerPosition,new Field(imageData,ParseContents.FALSE));
         
-//        record.setReadLength( Integer.parseInt( lenField.toString() ) );
-
         if (log.isDebugEnabled()) {
             for (final Map.Entry<Integer,Field> entry : record.getFields().entrySet()) {
                 if (entry.getKey() != headerPosition) {
