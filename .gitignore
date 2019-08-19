@@ -2,9 +2,13 @@
 **/.idea/
 **/*.iml
 
+
 #Misc directories
-**/.project/
+**/.project
 **/.scannerwork
+.classpath
+.settings
+.factorypath
 
 # Output directory for JET classes and binaries
 **/target
