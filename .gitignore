@@ -9,6 +9,7 @@
 .classpath
 .settings
 .factorypath
+.vscode
 
 # Output directory for JET classes and binaries
 **/target
