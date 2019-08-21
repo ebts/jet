@@ -1,6 +1,7 @@
 # Intellij workspace directory and files
 **/.idea/
 **/*.iml
+log.txt
 
 
 #Misc directories
