@@ -251,7 +251,7 @@ public abstract class LogicalRecord implements Serializable, Comparable<LogicalR
 
     protected static boolean isValidImageRecordType(final int recordType) {
 
-        return ((recordType != 1) && (recordType != 2));
+        return recordType != 1 && recordType != 2 && recordType != 9;
     }
 
     @Override
