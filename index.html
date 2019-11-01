@@ -61,7 +61,7 @@ System.out.println("The length of my record is:"+type1.getField(1).toString());<
 
 <pre><code>//Assume EBTS ebts is created. 
 //Move the values from 2.010 (First Name) and 2.011 (Last Name) to 2.018
-GenericRecord type2 = ebts.getRecordsByType(2).get(0);
+GenericRecord type2 = (GenericRecord) ebts.getRecordsByType(2).get(0);
 String firstName = type2.getField(10).toString();
 String lastName = type2.getField(11).toString();
 ebts.setValue(18, lastName+","+firstName);
@@ -72,9 +72,16 @@ type2.getFields().remove(11);</code></pre>
 <a id="writing-out-an-ebts-file" class="anchor" href="#writing-out-an-ebts-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing out an EBTS File</h3>
 
 <pre><code>//Assume existing EBTS ebts structure
-EbtsBuilder builder = new EbtsBuilder(ebts);
-byte[] serializedData = builder.build();
-Files.write(Paths.get("/path/to/outputEbts"), data);
+EbtsBuilder ebtsBuilder = new EbtsBuilder();
+byte [] sample = ebtsBuilder.build(ebts);
+
+String fileName = "testEbts.eft";
+File outputFile = new File(fileName);
+FileOutputStream fos = new FileOutputStream(outputFile);
+BufferedOutputStream bos = new BufferedOutputStream(fos);
+bos.write(sample);
+bos.close();
+System.out.println("Created "+fileName);
 </code></pre>
 
 <h2>
