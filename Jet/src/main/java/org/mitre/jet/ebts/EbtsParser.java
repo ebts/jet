@@ -494,6 +494,8 @@ public class EbtsParser {
                     imageData = new byte[Ints.fromByteArray(len)-imageLocation];
                     bb.get(imageData);
                     record.setField(9,new Field(imageData,ParseContents.FALSE));
+                } else {
+                    throw new EbtsParsingException("Unable to parse type 7 as type 4. Unable to determine image location.");
                 }
             } else {
                 throw new EbtsParsingException("Unable to parse type 7 as type 4. Unexpected value in alg field.");
