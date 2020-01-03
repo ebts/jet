@@ -489,11 +489,14 @@ public class EbtsParser {
                     log.debug("Found PNG at byte:{}",imageLocation);
                 }
 
-                if (imageLocation != -1) {
+                int remainingLength = Ints.fromByteArray(len);
+                if (imageLocation != -1 && imageLocation < remainingLength) {
                     bb.position(imageLocation);
-                    imageData = new byte[Ints.fromByteArray(len)-imageLocation];
+                    imageData = new byte[remainingLength-imageLocation];
                     bb.get(imageData);
                     record.setField(9,new Field(imageData,ParseContents.FALSE));
+                } else {
+                    throw new EbtsParsingException("Unable to parse type 7 as type 4. Unable to determine image location or beyond field size.");
                 }
             } else {
                 throw new EbtsParsingException("Unable to parse type 7 as type 4. Unexpected value in alg field.");
