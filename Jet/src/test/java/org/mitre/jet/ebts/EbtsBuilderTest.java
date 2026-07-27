@@ -25,9 +25,11 @@ import org.mitre.jet.ebts.records.BinaryHeaderImageRecord;
 import org.mitre.jet.ebts.records.GenericRecord;
 import org.mitre.jet.ebts.records.LogicalRecord;
 import org.mitre.jet.exceptions.EbtsBuildingException;
+import org.mitre.jet.exceptions.EbtsParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -202,6 +204,55 @@ public class EbtsBuilderTest {
 
     @Test
     public void type7asType4TestSuccess() throws Exception {
+        Ebts ebts = new Ebts();
+        GenericRecord type1 = new GenericRecord(1);
+        type1.setField(3, new Field("0400"));
+        type1.setField(8, new Field("WVMEDS001"));
+
+        GenericRecord type2 = new GenericRecord(2);
+        type2.setField(2, new Field("04"));
+        type2.setField(19, new Field("Smith,John"));
+        type2.getField(19).getOccurrences().add(new Occurrence("Smith,Johnny"));
+        type2.setField(18, new Field("Smith,Jo"));
+        type2.setField(41, new Field("B"));
+        type2.setField(40, new Field("A"));
+
+        List<String> strings = new ArrayList<String>();
+        strings.add("Test1");
+        strings.add("Test2");
+        strings.add("Test3");
+        List<Occurrence> occs = EbtsUtils.convertStringList(strings);
+        occs.add(new Occurrence("HI"));
+        occs.remove(new Occurrence("HI"));
+
+        type2.setField(50,new Field(occs));
+
+        int[] header = new int[]{4, 1, 1, 6, 1, 2, 2, 1};
+        BinaryHeaderImageRecord type7 = new BinaryHeaderImageRecord(7,header);
+        //add the WSQ header
+        type7.setImageData(DatatypeConverter.parseHexBinary("FFA0FF"));
+        type7.setField(3,new Field("1"));
+        type7.setField(4,new Field("1"));
+        type7.setField(5,new Field("1"));
+        type7.setField(6,new Field("1"));
+        type7.setField(7,new Field("1"));
+        type7.setField(8,new Field("1"));
+
+        ebts.addRecord(type1);
+        ebts.addRecord(type2);
+        ebts.addRecord(type7);
+
+        EbtsBuilder ebtsBuilder = new EbtsBuilder();
+        byte[] binaryData = ebtsBuilder.build(ebts);
+
+        Ebts parsedEbts = EbtsParser.parse(binaryData,Type7Handling.TREAT_AS_TYPE4);
+        log.info("{}",parsedEbts);
+
+    }
+
+    @Test(expected = EbtsParsingException.class)
+    public void type7asType4TestFailure2() throws Exception {
+        //this test demonstrates parsing where we fail to find the image location
         Ebts ebts = new Ebts();
         GenericRecord type1 = new GenericRecord(1);
         type1.setField(3, new Field("0400"));
